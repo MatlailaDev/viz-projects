@@ -1,0 +1,169 @@
+body{
+    font-family: "Inter", sans-serif;
+    display: block;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    padding: 2em;
+}
+
+.header {
+    display: flex;
+}
+
+.header a {
+    align-content: center;
+    padding: 10px;
+}
+
+h1,p {
+    margin: 10px auto;
+}
+
+.wrapper {
+    width: 100%;
+    height: auto;
+    position: relative;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.bin rect{
+    fill: cornflowerblue;
+    /* transition: height 1s ease-out,
+                y 1s ease-out; */
+}
+
+.bin text{
+    text-anchor: middle;
+    fill: darkgrey;
+    font-size: 0.5em;
+    font-family: sans-serif;
+    /* transition: transform 1s ease-out; */
+}
+
+.bin rect:hover {
+    fill: seagreen;
+}
+
+.mean{
+    stroke: #880808;
+    stroke-dasharray: 2px 4px;
+    /* transition: transform 1s ease-out;     */
+}
+
+.meanLabel {
+    font-size: 0.5em;
+}
+
+.x-axis-label{
+    fill: black;
+    font-size: 1.1em;
+    text-transform: capitalize;
+}
+
+
+.tooltip {
+    opacity: 0;
+    position: absolute;
+    top: -12px;
+    left: 0;
+    padding: 0.6em 1em;
+    background: #fff;
+    text-align: center;
+    /* border: 1px solid #ddd; */
+    border: none;
+    border-radius: 5px;
+    /* background-color: grey; */
+    background: linear-gradient(#FEFEFE, seagreen);
+    z-index: 10;
+    transition: opacity 0.2s ease-out;
+    pointer-events: none;
+}
+
+/* .tooltip:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    transform: translate(-50%, 50%) rotate(45deg);
+    transform-origin: center center;
+    z-index: 10;
+} */
+
+.tooltip-range {
+    margin-bottom: 0.2em;
+    font-weight: 600;
+}
+
+button{
+    font-size: 1.2em;
+    margin-top: 2em;
+    padding: 0.5em 1.2em;
+    appearance: none;
+    -webkit-appearance: none;
+    background: darkseagreen;
+    color: white;
+    border: none;
+    box-shadow: 0 5px 0 0 seagreen;
+    border-radius: 6px;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.1s ease-out;
+}
+
+button:hover,
+button:focus{
+    background: #73b173;
+    box-shadow: 0 4px 0 0 seagreen;
+    transform: translateY(1px);
+}
+
+button:hover:active,
+button:focus:active,
+button:active{
+    box-shadow: 0 1px 0 0 seagreen;
+    transform: translateY(4px);
+}
+
+@media screen and (max-width: 576px) {
+    .bin text {
+        font-size: 0.9em;
+    }
+    
+    .meanLabel {
+        font-size: 1em;
+    }
+
+    .x-axis-label {
+        font-size: 1.7em;
+    }
+    
+    .tooltip {
+        font-size: 8px;
+    }
+
+    button {
+        font-size: 0.5em;
+        padding: 0.6em 0.7em;
+        box-shadow: 0 3px 0 0 seagreen;
+    }  
+    
+    button:hover,
+    button:focus{
+        box-shadow: 0 2px 0 0 seagreen;
+    }
+
+    button:hover:active,
+    button:focus:active,
+    button:active{
+        box-shadow: 0 1px 0 0 seagreen;
+    } 
+}
