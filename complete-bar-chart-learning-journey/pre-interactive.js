@@ -1,6 +1,5 @@
 async function drawBars(){
-    
-    const dataset = await d3.json("/data/my_weather_data.json")
+    const dataset = await d3.json("data/my_weather_data.json")
     console.table(dataset)
 
     const width = 600
@@ -18,9 +17,9 @@ async function drawBars(){
     const wrapper = d3.select("#wrapper")
                         .append("svg")
                         .attr("viewBox", `0 0 ${svgWidth} ${svgHeight}`)
-                        .style("width", "100%")
-                        .style("height", "auto")
-                        .style("display", "block")
+                            .style("width", "100%")
+                            .style("height", "auto")
+                            .style("display", "block")
 
     const bounds = wrapper.append("g")
                             .style("transform", `translate(${marginLeft}px, ${marginTop}px)`)
@@ -32,8 +31,8 @@ async function drawBars(){
             .attr("class", "mean")    
     bounds.append("g")
             .attr("class", "x-axis")
-            .style("transform", `translateY(${boundsHeight}px)`)
-        .append("text")
+            .style("transform", `translate(${boundsHeight}px)`)
+          .append("text")
             .attr("class", "x-axis-label")
     bounds.append("text")
             .attr("class", "meanLabel")
@@ -62,16 +61,14 @@ async function drawBars(){
                             .range([boundsHeight, 0])
                             .nice()
 
-                            
         const barPadding = 1
 
         let binGroups = bounds.select(".bins")
                                 .selectAll(".bin")
                                 .data(bins)
 
-
-        const oldBinGroups = binGroups.exit()
-
+        binGroups.exit()
+                    .remove()
 
         const newBinGroups = binGroups.enter()
                                         .append("g")
@@ -86,129 +83,55 @@ async function drawBars(){
                 
         newBinGroups.append("text")
                     .attr("x", (d) => xScale(d.x0) + (xScale(d.x1) - xScale(d.x0))/2)
-                    .attr("y", boundsHeight - 5)
+                    .attr("y", boundsHeight)
 
         binGroups = newBinGroups.merge(binGroups)
 
-
-        const exitTransition = d3.transition()
-                                    .ease(d3.easeLinear)
-                                    .duration(600)
-
-        const updateTransition = exitTransition.transition()
-                                    .ease(d3.easeLinear)
-                                    .duration(600)
-
-        const updateTransitionMean = updateTransition.transition()
-                                    .ease(d3.easeLinear)
-                                    .duration(800)
-
-        
-
-        oldBinGroups.selectAll("rect")
-                    .style("fill", "red")
-                .transition(exitTransition)
-                    .attr("y", boundsHeight)
-                    .attr("height", 0)
-        
-        oldBinGroups.selectAll("text")
-                .transition(exitTransition)
-                    .attr("y", boundsHeight)
-
-        oldBinGroups.transition(exitTransition)
-                    .remove()
-
-
         const barRects = binGroups.select("rect")
-                                    .on("mouseenter", onMouseEnter)
-                                    .on("mouseleave", onMouseLeave)
-                                .transition(updateTransition)
+                                .transition()
+                                .duration(2500)
                                     .attr("x", (d) => xScale(d.x0) + barPadding)
                                     .attr("y", (d) => yScale(yAccessor(d)))
                                     .attr("width", (d) => d3.max([0, xScale(d.x1) - xScale(d.x0) - barPadding]))
                                     .attr("height", (d) => boundsHeight - yScale(yAccessor(d)))
-                                    .style("fill", "#00BD9D")
-                                    .attr("rx", "5px")
+                                .transition()
+                                    .style("fill", "cornflowerblue")
 
-
-        const barText = binGroups.filter(yAccessor)
-                                .select("text")
-                            .transition(updateTransition)
+        const barText = binGroups.select("text")
+                            .transition()
+                            .duration(3500)
                                 .attr("x", (d) => xScale(d.x0) + (xScale(d.x1) - xScale(d.x0))/2)
                                 .attr("y", (d) => yScale(yAccessor(d)) - 5)
-                                .text((d) => yAccessor(d) || "")
-
+                                .text((d) => yAccessor(d) || "" /*yAccessor*/)
 
         const mean = d3.mean(dataset, metricAccessor)
         console.log(mean)
 
-        const meanLine = bounds.select(".mean")
-                            .transition(updateTransitionMean)
+        const meanLine = bounds.selectAll(".mean")
                                 .attr("x1", xScale(mean))
                                 .attr("x2", xScale(mean))
-                                .attr("y1", -20)                          
+                                .attr("y1", -20)
                                 .attr("y2", boundsHeight)
 
         const meanLabel = bounds.select(".meanLabel")
-                            .transition(updateTransitionMean)
                                 .attr("x", xScale(mean))
-                                .attr("y", -20)
+                                .attr("y", -25)
                                 .text(`mean = ${mean.toFixed(3)}`)
                                 .attr("fill", "maroon")
+                                .style("font-size", "12px")
                                 .style("text-anchor", "middle")
 
 
         const xAxis = bounds.select(".x-axis")
-                            .transition(updateTransition)
                                 .call(d3.axisBottom(xScale))
-
+                                .style("transform", `translateY(${boundsHeight}px)`)
 
 
         const xAxisLabel = xAxis.select(".x-axis-label")
                                 .attr("x", boundsWidth/2)
                                 .attr("y", marginBottom - 10)
-                            .transition()
                                 .text(metric)
                                 .style("fill", "black")
-
-            // 7. Set up interactions
-        const tooltip = d3.select("#tooltip")
-
-        function onMouseEnter(event, datum) {
-
-            // Fill style
-            d3.select(this).style("fill", "seagreen")
-
-            tooltip.select("#count")
-                .text(yAccessor(datum))
-
-            tooltip.select("#range")
-                .text([datum.x0, datum.x1].join(" - "))
-
-
-
-            // Convert chart coordinates -> pixels, accounting for the viewBox scaling
-            const svgRect = wrapper.node().getBoundingClientRect()
-            const wrapperRect = document.getElementById("wrapper").getBoundingClientRect()
-            const k = svgRect.width / svgWidth
-
-            const x = (svgRect.left - wrapperRect.left)
-                    + (xScale(datum.x0) + (xScale(datum.x1) - xScale(datum.x0)) / 2 + marginLeft) * k
-            const y = (svgRect.top - wrapperRect.top)
-                    + (yScale(yAccessor(datum)) + marginTop - 5) * k
-
-            tooltip.style("transform", `translate(calc(-50% + ${x}px), calc(-100% + ${y}px))`)
-                    .style("opacity", 0.9)
-
-        }
-
-        function onMouseLeave() {
-
-            // Fill style
-            d3.select(this).style("fill", "#00BD9D")
-
-            tooltip.style("opacity", 0)
-        }
 
     }
 
@@ -229,9 +152,9 @@ async function drawBars(){
     let selectedMetricIndex = 0
     drawHistogram(metrics[selectedMetricIndex])
 
-    const button = d3.select("#wrapper")
-                    .append("button")
-                    .text("Change metric")   
+    const button = d3.select("body")
+                     .append("button")
+                     .text("Change metric")   
 
     button.node().addEventListener("click", onClick)
 

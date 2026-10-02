@@ -1,5 +1,5 @@
 async function drawWeatherBarChart(){
-    let dataset = await d3.json("/data/my_weather_data.json")
+    let dataset = await d3.json("data/my_weather_data.json")
     console.table(dataset) 
 
     // const metricAccessor = function(d){return d.humidity}
