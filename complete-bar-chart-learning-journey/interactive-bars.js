@@ -18,9 +18,7 @@ async function drawBars(){
     const wrapper = d3.select("#wrapper")
                         .append("svg")
                         .attr("viewBox", `0 0 ${svgWidth} ${svgHeight}`)
-                        .style("width", "100%")
-                        .style("height", "auto")
-                        .style("display", "block")
+        
 
     const bounds = wrapper.append("g")
                             .style("transform", `translate(${marginLeft}px, ${marginTop}px)`)
